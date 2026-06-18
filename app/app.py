@@ -1,6 +1,8 @@
 from pathlib import Path
+import os
 
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
@@ -31,6 +33,25 @@ from app.utils import (
 app = FastAPI(title="Expense Tracker API", version="1.0.0")
 create_tables()
 STATIC_DIR = Path(__file__).with_name("static")
+
+# CORS Configuration for production deployment
+allowed_origins = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    os.getenv("VERCEL_URL", "").rstrip("/"),
+]
+# Add Vercel deployment URL if available
+if os.getenv("VERCEL_URL"):
+    allowed_origins.append(f"https://{os.getenv('VERCEL_URL')}")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[origin for origin in allowed_origins if origin],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def custom_openapi():
     if app.openapi_schema:
