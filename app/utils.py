@@ -2,8 +2,14 @@ from passlib.context import CryptContext
 import os 
 from datetime import datetime, timedelta
 from typing import Union, Any
-from jose import jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
 from dotenv import load_dotenv
+from sqlalchemy.orm import Session
+
+from app import crud
+from app.database import get_db
 
 load_dotenv()
 
@@ -14,6 +20,7 @@ SECRET_KEY = os.getenv('JWT_SECRET_KEY')   # should be kept secret
 REFRESH_SECRET_KEY = os.getenv('JWT_REFRESH_SECRET_KEY')   # should be kept secret
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 def get_hashed_password(password: str)->str:
     """Takes a plain password and returns the hash for it so that
@@ -48,3 +55,26 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) ->
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, REFRESH_SECRET_KEY, ALGORITHM)
     return encoded_jwt
+
+
+def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+):
+    credentials_error = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or expired token",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email = payload.get("sub")
+        if email is None:
+            raise credentials_error
+    except JWTError as exc:
+        raise credentials_error from exc
+
+    user = crud.find_user(db, email)
+    if user is None:
+        raise credentials_error
+    return user

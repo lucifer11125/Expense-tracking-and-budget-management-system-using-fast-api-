@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Expense Tracker</title>
+  <style>
+    :root {
+      --bg: #f5f7f4;
+      --panel: #ffffff;
+      --ink: #17211b;
+      --muted: #657066;
+      --line: #dce3dc;
+      --green: #1f7a4d;
+      --green-dark: #145b39;
+      --red: #b42318;
+      --amber: #9a6400;
+      --blue: #1d5d9b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Arial, Helvetica, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      color: #ffffff;
+      background: var(--green);
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: var(--green-dark);
+    }
+
+    button.secondary {
+      color: var(--ink);
+      background: #e8eee8;
+    }
+
+    button.secondary:hover {
+      background: #dce6dc;
+    }
+
+    button.danger {
+      background: var(--red);
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      color: var(--ink);
+      background: #ffffff;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      background: #ffffff;
+      padding: 24px;
+    }
+
+    .brand {
+      margin-bottom: 24px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .brand p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tabs button {
+      color: var(--ink);
+      background: #edf2ed;
+    }
+
+    .tabs button.active {
+      color: #ffffff;
+      background: var(--green);
+    }
+
+    .form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .main {
+      padding: 24px;
+      display: grid;
+      gap: 20px;
+      align-content: start;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      min-height: 54px;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .user {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .stat,
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .stat {
+      padding: 16px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(300px, 380px) 1fr;
+      gap: 16px;
+    }
+
+    .panel h3 {
+      margin: 0;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      font-size: 18px;
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .row-actions button {
+      padding: 7px 9px;
+      font-size: 12px;
+    }
+
+    .message {
+      min-height: 22px;
+      margin-top: 12px;
+      color: var(--blue);
+      font-size: 14px;
+    }
+
+    .message.error {
+      color: var(--red);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .status {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      color: #ffffff;
+      background: var(--green);
+      white-space: nowrap;
+    }
+
+    .status.over_budget {
+      background: var(--amber);
+    }
+
+    @media (max-width: 900px) {
+      .shell,
+      .grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>Expense Tracker</h1>
+        <p>Budget and spending dashboard</p>
+      </div>
+
+      <div id="authBox">
+        <div class="tabs">
+          <button id="loginTab" class="active" type="button">Login</button>
+          <button id="signupTab" type="button">Signup</button>
+        </div>
+
+        <form id="loginForm" class="form">
+          <label>Email or username
+            <input id="loginUsername" required autocomplete="username">
+          </label>
+          <label>Password
+            <input id="loginPassword" type="password" required autocomplete="current-password">
+          </label>
+          <button type="submit">Login</button>
+        </form>
+
+        <form id="signupForm" class="form hidden">
+          <label>Username
+            <input id="signupUsername" required minlength="3">
+          </label>
+          <label>Email
+            <input id="signupEmail" type="email" required>
+          </label>
+          <label>Password
+            <input id="signupPassword" type="password" required minlength="6">
+          </label>
+          <button type="submit">Create Account</button>
+        </form>
+      </div>
+
+      <div id="accountBox" class="hidden">
+        <div class="user" id="accountText"></div>
+        <div class="actions" style="margin-top: 14px;">
+          <button class="secondary" type="button" onclick="openDocs()">API Docs</button>
+          <button class="danger" type="button" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <div id="message" class="message"></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h2>Dashboard</h2>
+          <div class="user" id="todayText"></div>
+        </div>
+        <div class="actions">
+          <button class="secondary" type="button" onclick="loadAll()">Refresh</button>
+        </div>
+      </div>
+
+      <section class="stats">
+        <div class="stat">
+          <span>Total spent</span>
+          <strong id="totalSpent">0.00</strong>
+        </div>
+        <div class="stat">
+          <span>Expenses</span>
+          <strong id="expenseCount">0</strong>
+        </div>
+        <div class="stat">
+          <span>Budgets</span>
+          <strong id="budgetCount">0</strong>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="panel">
+          <h3 id="expenseFormTitle">Add Expense</h3>
+          <div class="panel-body">
+            <form id="expenseForm" class="form">
+              <input id="expenseId" type="hidden">
+              <label>Title
+                <input id="expenseTitle" required>
+              </label>
+              <label>Amount
+                <input id="expenseAmount" type="number" step="0.01" min="1" required>
+              </label>
+              <label>Category
+                <input id="expenseCategory" required>
+              </label>
+              <label>Date
+                <input id="expenseDate" type="date" required>
+              </label>
+              <label>Note
+                <textarea id="expenseNote" rows="3"></textarea>
+              </label>
+              <div class="actions">
+                <button type="submit">Save Expense</button>
+                <button class="secondary" type="button" onclick="resetExpenseForm()">Clear</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Expenses</h3>
+          <div class="panel-body">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Date</th>
+                  <th>Amount</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="expenseRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="panel">
+          <h3 id="budgetFormTitle">Add Budget</h3>
+          <div class="panel-body">
+            <form id="budgetForm" class="form">
+              <input id="budgetId" type="hidden">
+              <label>Category
+                <input id="budgetCategory" required>
+              </label>
+              <label>Limit amount
+                <input id="budgetAmount" type="number" step="0.01" min="1" required>
+              </label>
+              <label>Month
+                <input id="budgetMonth" type="month" required>
+              </label>
+              <div class="actions">
+                <button type="submit">Save Budget</button>
+                <button class="secondary" type="button" onclick="resetBudgetForm()">Clear</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Budgets</h3>
+          <div class="panel-body">
+            <table>
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Month</th>
+                  <th>Limit</th>
+                  <th>Spent</th>
+                  <th>Remaining</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="budgetRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const tokenKey = "expense_tracker_token";
+    const state = { expenses: [], budgets: [], summary: null, user: null };
+
+    const money = new Intl.NumberFormat("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    document.getElementById("todayText").textContent = new Date().toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+    document.getElementById("expenseDate").valueAsDate = new Date();
+    document.getElementById("budgetMonth").value = new Date().toISOString().slice(0, 7);
+
+    function token() {
+      return localStorage.getItem(tokenKey);
+    }
+
+    function authHeaders() {
+      return { Authorization: `Bearer ${token()}` };
+    }
+
+    function setMessage(text, isError = false) {
+      const box = document.getElementById("message");
+      box.textContent = text;
+      box.classList.toggle("error", isError);
+    }
+
+    async function request(path, options = {}) {
+      const response = await fetch(path, options);
+      if (!response.ok) {
+        let detail = "Request failed";
+        try {
+          const body = await response.json();
+          detail = body.detail || detail;
+        } catch (_) {}
+        throw new Error(Array.isArray(detail) ? detail[0].msg : detail);
+      }
+      if (response.status === 204) return null;
+      return response.json();
+    }
+
+    function showLogin() {
+      document.getElementById("loginTab").classList.add("active");
+      document.getElementById("signupTab").classList.remove("active");
+      document.getElementById("loginForm").classList.remove("hidden");
+      document.getElementById("signupForm").classList.add("hidden");
+    }
+
+    function showSignup() {
+      document.getElementById("signupTab").classList.add("active");
+      document.getElementById("loginTab").classList.remove("active");
+      document.getElementById("signupForm").classList.remove("hidden");
+      document.getElementById("loginForm").classList.add("hidden");
+    }
+
+    function setLoggedIn(isLoggedIn) {
+      document.getElementById("authBox").classList.toggle("hidden", isLoggedIn);
+      document.getElementById("accountBox").classList.toggle("hidden", !isLoggedIn);
+    }
+
+    async function login(event) {
+      event.preventDefault();
+      const form = new URLSearchParams();
+      form.set("username", document.getElementById("loginUsername").value);
+      form.set("password", document.getElementById("loginPassword").value);
+
+      try {
+        const data = await request("/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: form
+        });
+        localStorage.setItem(tokenKey, data.access_token);
+        setMessage("Logged in");
+        await loadAll();
+      } catch (error) {
+        setMessage(error.message, true);
+      }
+    }
+
+    async function signup(event) {
+      event.preventDefault();
+      try {
+        await request("/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: document.getElementById("signupUsername").value,
+            email: document.getElementById("signupEmail").value,
+            password: document.getElementById("signupPassword").value
+          })
+        });
+        document.getElementById("loginUsername").value = document.getElementById("signupEmail").value;
+        document.getElementById("loginPassword").value = document.getElementById("signupPassword").value;
+        showLogin();
+        setMessage("Account created. Login now.");
+      } catch (error) {
+        setMessage(error.message, true);
+      }
+    }
+
+    async function saveExpense(event) {
+      event.preventDefault();
+      if (!token()) return setMessage("Login first", true);
+
+      const id = document.getElementById("expenseId").value;
+      const path = id ? `/expenses/${id}` : "/expenses";
+      const method = id ? "PUT" : "POST";
+
+      try {
+        await request(path, {
+          method,
+          headers: { "Content-Type": "application/json", ...authHeaders() },
+          body: JSON.stringify({
+            title: document.getElementById("expenseTitle").value,
+            amount: Number(document.getElementById("expenseAmount").value),
+            category: document.getElementById("expenseCategory").value,
+            spent_on: document.getElementById("expenseDate").value,
+            note: document.getElementById("expenseNote").value || null
+          })
+        });
+        resetExpenseForm();
+        setMessage("Expense saved");
+        await loadAll();
+      } catch (error) {
+        setMessage(error.message, true);
+      }
+    }
+
+    async function saveBudget(event) {
+      event.preventDefault();
+      if (!token()) return setMessage("Login first", true);
+
+      const id = document.getElementById("budgetId").value;
+      const path = id ? `/budgets/${id}` : "/budgets";
+      const method = id ? "PUT" : "POST";
+
+      try {
+        await request(path, {
+          method,
+          headers: { "Content-Type": "application/json", ...authHeaders() },
+          body: JSON.stringify({
+            category: document.getElementById("budgetCategory").value,
+            limit_amount: Number(document.getElementById("budgetAmount").value),
+            month: document.getElementById("budgetMonth").value
+          })
+        });
+        resetBudgetForm();
+        setMessage("Budget saved");
+        await loadAll();
+      } catch (error) {
+        setMessage(error.message, true);
+      }
+    }
+
+    function editExpense(id) {
+      const expense = state.expenses.find(item => item.id === id);
+      if (!expense) return;
+      document.getElementById("expenseFormTitle").textContent = "Edit Expense";
+      document.getElementById("expenseId").value = expense.id;
+      document.getElementById("expenseTitle").value = expense.title;
+      document.getElementById("expenseAmount").value = expense.amount;
+      document.getElementById("expenseCategory").value = expense.category;
+      document.getElementById("expenseDate").value = expense.spent_on;
+      document.getElementById("expenseNote").value = expense.note || "";
+    }
+
+    function editBudget(id) {
+      const budget = state.budgets.find(item => item.id === id);
+      if (!budget) return;
+      document.getElementById("budgetFormTitle").textContent = "Edit Budget";
+      document.getElementById("budgetId").value = budget.id;
+      document.getElementById("budgetCategory").value = budget.category;
+      document.getElementById("budgetAmount").value = budget.limit_amount;
+      document.getElementById("budgetMonth").value = budget.month;
+    }
+
+    async function deleteExpense(id) {
+      try {
+        await request(`/expenses/${id}`, { method: "DELETE", headers: authHeaders() });
+        setMessage("Expense deleted");
+        await loadAll();
+      } catch (error) {
+        setMessage(error.message, true);
+      }
+    }
+
+    async function deleteBudget(id) {
+      try {
+        await request(`/budgets/${id}`, { method: "DELETE", headers: authHeaders() });
+        setMessage("Budget deleted");
+        await loadAll();
+      } catch (error) {
+        setMessage(error.message, true);
+      }
+    }
+
+    function resetExpenseForm() {
+      document.getElementById("expenseFormTitle").textContent = "Add Expense";
+      document.getElementById("expenseForm").reset();
+      document.getElementById("expenseId").value = "";
+      document.getElementById("expenseDate").valueAsDate = new Date();
+    }
+
+    function resetBudgetForm() {
+      document.getElementById("budgetFormTitle").textContent = "Add Budget";
+      document.getElementById("budgetForm").reset();
+      document.getElementById("budgetId").value = "";
+      document.getElementById("budgetMonth").value = new Date().toISOString().slice(0, 7);
+    }
+
+    function render() {
+      document.getElementById("totalSpent").textContent = money.format(state.summary?.total_spent || 0);
+      document.getElementById("expenseCount").textContent = state.summary?.expenses_count || 0;
+      document.getElementById("budgetCount").textContent = state.budgets.length;
+
+      document.getElementById("expenseRows").innerHTML = state.expenses.map(expense => `
+        <tr>
+          <td>${escapeHtml(expense.title)}</td>
+          <td>${escapeHtml(expense.category)}</td>
+          <td>${escapeHtml(expense.spent_on)}</td>
+          <td>${money.format(expense.amount)}</td>
+          <td>
+            <div class="row-actions">
+              <button class="secondary" type="button" onclick="editExpense('${expense.id}')">Edit</button>
+              <button class="danger" type="button" onclick="deleteExpense('${expense.id}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join("") || `<tr><td colspan="5">No expenses yet</td></tr>`;
+
+      document.getElementById("budgetRows").innerHTML = state.budgets.map(budget => {
+        const status = state.summary?.budgets.find(item => item.budget_id === budget.id);
+        return `
+          <tr>
+            <td>${escapeHtml(budget.category)}</td>
+            <td>${escapeHtml(budget.month)}</td>
+            <td>${money.format(budget.limit_amount)}</td>
+            <td>${money.format(status?.spent || 0)}</td>
+            <td>${money.format(status?.remaining ?? budget.limit_amount)}</td>
+            <td><span class="status ${status?.status || ""}">${status?.status || "within_budget"}</span></td>
+            <td>
+              <div class="row-actions">
+                <button class="secondary" type="button" onclick="editBudget('${budget.id}')">Edit</button>
+                <button class="danger" type="button" onclick="deleteBudget('${budget.id}')">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("") || `<tr><td colspan="7">No budgets yet</td></tr>`;
+
+      if (state.user) {
+        document.getElementById("accountText").textContent = `${state.user.username} - ${state.user.email}`;
+      }
+    }
+
+    async function loadAll() {
+      if (!token()) {
+        setLoggedIn(false);
+        render();
+        return;
+      }
+
+      try {
+        const [user, expenses, budgets, summary] = await Promise.all([
+          request("/me", { headers: authHeaders() }),
+          request("/expenses", { headers: authHeaders() }),
+          request("/budgets", { headers: authHeaders() }),
+          request("/summary", { headers: authHeaders() })
+        ]);
+        state.user = user;
+        state.expenses = expenses;
+        state.budgets = budgets;
+        state.summary = summary;
+        setLoggedIn(true);
+        render();
+      } catch (error) {
+        localStorage.removeItem(tokenKey);
+        setLoggedIn(false);
+        setMessage("Please login again", true);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem(tokenKey);
+      state.user = null;
+      state.expenses = [];
+      state.budgets = [];
+      state.summary = null;
+      setLoggedIn(false);
+      render();
+      setMessage("Logged out");
+    }
+
+    function openDocs() {
+      window.open("/docs", "_blank");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    document.getElementById("loginTab").addEventListener("click", showLogin);
+    document.getElementById("signupTab").addEventListener("click", showSignup);
+    document.getElementById("loginForm").addEventListener("submit", login);
+    document.getElementById("signupForm").addEventListener("submit", signup);
+    document.getElementById("expenseForm").addEventListener("submit", saveExpense);
+    document.getElementById("budgetForm").addEventListener("submit", saveBudget);
+
+    loadAll();
+  </script>
+</body>
+</html>
