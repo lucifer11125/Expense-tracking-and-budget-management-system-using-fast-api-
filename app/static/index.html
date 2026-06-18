@@ -3,289 +3,693 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Expense Tracker</title>
+  <title>Expense Tracker - Precision Fiscal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f5f7f4;
-      --panel: #ffffff;
-      --ink: #17211b;
-      --muted: #657066;
-      --line: #dce3dc;
-      --green: #1f7a4d;
-      --green-dark: #145b39;
-      --red: #b42318;
-      --amber: #9a6400;
-      --blue: #1d5d9b;
+      /* Precision Fiscal Color System */
+      --surface: #121414;
+      --surface-dim: #121414;
+      --surface-bright: #393939;
+      --surface-container-lowest: #0d0e0f;
+      --surface-container-low: #1b1c1c;
+      --surface-container: #1f2020;
+      --surface-container-high: #292a2a;
+      --surface-container-highest: #343535;
+      --on-surface: #e3e2e2;
+      --on-surface-variant: #c6c6c6;
+      --inverse-surface: #e3e2e2;
+      --inverse-on-surface: #303031;
+      --outline: #919191;
+      --outline-variant: #474747;
+      --surface-tint: #b0c6ff;
+      --primary: #b0c6ff;
+      --on-primary: #002d6f;
+      --primary-container: #1a438f;
+      --on-primary-container: #d9e2ff;
+      --inverse-primary: #375ca8;
+      --secondary: #bfc6dc;
+      --on-secondary: #293041;
+      --secondary-container: #3f4759;
+      --on-secondary-container: #dbe2f9;
+      --tertiary: #e0bbde;
+      --on-tertiary: #412742;
+      --tertiary-container: #593d5a;
+      --on-tertiary-container: #fed7fa;
+      --error: #ffb4ab;
+      --on-error: #690005;
+      --error-container: #93000a;
+      --on-error-container: #ffdad6;
+      --background: #121414;
+      --on-background: #e3e2e2;
+      
+      /* Spacing */
+      --spacing-base: 4px;
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 48px;
+      --container-max: 1440px;
+      --gutter: 24px;
+      
+      /* Radius */
+      --radius-sm: 0.125rem;
+      --radius-base: 0.25rem;
+      --radius-md: 0.375rem;
+      --radius-lg: 0.5rem;
+      --radius-xl: 0.75rem;
+      --radius-full: 9999px;
     }
 
     * {
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
       margin: 0;
-      color: var(--ink);
-      background: var(--bg);
-      font-family: Arial, Helvetica, sans-serif;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
+      color: var(--on-surface);
+      background: linear-gradient(135deg, #0a0b0c 0%, #1a1d1f 25%, #121414 50%, #0f1113 75%, #1a1c1e 100%);
+      background-attachment: fixed;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
       letter-spacing: 0;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(176, 198, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(224, 187, 222, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body > * {
+      position: relative;
+      z-index: 1;
     }
 
     button,
     input,
-    textarea {
+    textarea,
+    select {
       font: inherit;
     }
 
+    /* Typography System */
+    .display-lg {
+      font-family: 'Inter', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 44px;
+      letter-spacing: -0.02em;
+    }
+
+    .display-lg-mobile {
+      font-family: 'Inter', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 34px;
+      letter-spacing: -0.01em;
+    }
+
+    .headline-md {
+      font-family: 'Inter', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 32px;
+      letter-spacing: -0.01em;
+    }
+
+    .title-sm {
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 28px;
+    }
+
+    .body-md {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+    }
+
+    .body-sm {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+    }
+
+    .label-caps {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .mono-data {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+    }
+
+    /* Buttons */
     button {
-      border: 0;
-      border-radius: 6px;
-      padding: 10px 14px;
-      color: #ffffff;
-      background: var(--green);
+      border: none;
+      border-radius: var(--radius-base);
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
     }
 
-    button:hover {
-      background: var(--green-dark);
+    button:active {
+      transform: scale(0.98);
     }
 
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Primary Button */
+    button:not(.secondary):not(.danger) {
+      background: var(--primary);
+      color: var(--on-primary);
+      font-weight: 600;
+    }
+
+    button:not(.secondary):not(.danger):hover:not(:disabled) {
+      background: #a0b6ef;
+      box-shadow: 0 2px 8px rgba(176, 198, 255, 0.2);
+    }
+
+    button:not(.secondary):not(.danger):focus:not(:disabled) {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* Secondary Button */
     button.secondary {
-      color: var(--ink);
-      background: #e8eee8;
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--outline-variant);
     }
 
-    button.secondary:hover {
-      background: #dce6dc;
+    button.secondary:hover:not(:disabled) {
+      background: var(--surface-container);
+      border-color: var(--outline);
     }
 
+    button.secondary:focus:not(:disabled) {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* Danger Button */
     button.danger {
-      background: var(--red);
+      background: var(--error-container);
+      color: var(--on-error-container);
+      font-weight: 600;
     }
 
+    button.danger:hover:not(:disabled) {
+      background: #a00f17;
+    }
+
+    button.danger:focus:not(:disabled) {
+      outline: 2px solid var(--error);
+      outline-offset: 2px;
+    }
+
+    /* Form Elements */
     input,
-    textarea {
+    textarea,
+    select {
       width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      padding: 10px;
-      color: var(--ink);
-      background: #ffffff;
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--radius-base);
+      padding: 10px 12px;
+      color: var(--on-surface);
+      background: var(--surface-container-low);
+      transition: all 0.2s ease;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--on-surface-variant);
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: var(--surface-container);
+      box-shadow: 0 0 0 2px rgba(176, 198, 255, 0.15), inset 0 0 0 1px var(--primary);
     }
 
     label {
-      display: grid;
-      gap: 6px;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 700;
+      display: block;
+      margin-bottom: var(--spacing-sm);
+      color: var(--on-surface-variant);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
 
+    .form {
+      display: grid;
+      gap: var(--spacing-md);
+    }
+
+    label > input,
+    label > textarea,
+    label > select {
+      margin-top: var(--spacing-sm);
+    }
+
+    /* Tables */
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
     }
 
-    th,
-    td {
-      border-bottom: 1px solid var(--line);
-      padding: 10px 8px;
-      text-align: left;
-      vertical-align: middle;
-    }
-
     th {
-      color: var(--muted);
+      background: var(--surface-container);
+      color: var(--on-surface-variant);
       font-size: 12px;
+      font-weight: 600;
+      line-height: 16px;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--outline-variant);
+      height: 52px;
     }
 
+    td {
+      padding: 16px;
+      border-bottom: 1px solid var(--outline-variant);
+      color: var(--on-surface);
+      font-family: 'JetBrains Mono', monospace;
+      height: 52px;
+    }
+
+    tr:hover {
+      background: var(--surface-container-high);
+    }
+
+    /* Layout */
     .shell {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 280px 1fr;
+      gap: 0;
+      position: relative;
     }
 
     .sidebar {
-      border-right: 1px solid var(--line);
-      background: #ffffff;
-      padding: 24px;
+      background: rgba(18, 20, 20, 0.8);
+      backdrop-filter: blur(10px);
+      border-right: 1px solid rgba(145, 145, 145, 0.2);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+      overflow-y: auto;
+      box-shadow: inset -1px 0 0 rgba(176, 198, 255, 0.05), 0 0 1px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+
+    .sidebar::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, rgba(26, 67, 143, 0.03) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .sidebar > * {
+      position: relative;
+      z-index: 1;
     }
 
     .brand {
-      margin-bottom: 24px;
+      margin-bottom: var(--spacing-md);
     }
 
     .brand h1 {
       margin: 0;
       font-size: 28px;
-      line-height: 1.1;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--primary);
     }
 
     .brand p {
       margin: 8px 0 0;
-      color: var(--muted);
+      color: var(--on-surface-variant);
+      font-size: 13px;
     }
 
     .tabs {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 16px;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
     }
 
     .tabs button {
-      color: var(--ink);
-      background: #edf2ed;
+      padding: 10px 12px;
+      background: var(--surface-container);
+      color: var(--on-surface-variant);
+      border: 1px solid var(--outline-variant);
+      font-weight: 500;
     }
 
     .tabs button.active {
-      color: #ffffff;
-      background: var(--green);
-    }
-
-    .form {
-      display: grid;
-      gap: 12px;
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
     }
 
     .main {
-      padding: 24px;
+      padding: var(--spacing-lg);
       display: grid;
-      gap: 20px;
+      gap: var(--spacing-xl);
       align-content: start;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      width: 100%;
     }
 
     .topbar {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      min-height: 54px;
+      align-items: flex-start;
+      gap: var(--spacing-md);
     }
 
     .topbar h2 {
       margin: 0;
-      font-size: 24px;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--on-surface);
+    }
+
+    .topbar-content {
+      flex: 1;
     }
 
     .user {
-      color: var(--muted);
-      font-size: 14px;
+      color: var(--on-surface-variant);
+      font-size: 13px;
+      margin-top: 4px;
     }
 
+    .user-section {
+      color: var(--on-surface-variant);
+      font-size: 14px;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    /* Stats Cards */
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, minmax(160px, 1fr));
-      gap: 12px;
-    }
-
-    .stat,
-    .panel {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel);
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-lg);
     }
 
     .stat {
-      padding: 16px;
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      box-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
     }
 
-    .stat span {
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 700;
+    .stat-label {
+      color: var(--on-surface-variant);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
 
-    .stat strong {
+    .stat-value {
       display: block;
-      margin-top: 8px;
-      font-size: 24px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
     }
 
+    .stat-delta {
+      font-size: 12px;
+      color: var(--on-surface-variant);
+    }
+
+    /* Grid Layout */
     .grid {
       display: grid;
-      grid-template-columns: minmax(300px, 380px) 1fr;
-      gap: 16px;
+      grid-template-columns: minmax(320px, 420px) 1fr;
+      gap: var(--spacing-lg);
+    }
+
+    /* Cards/Panels */
+    .panel {
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
     }
 
     .panel h3 {
       margin: 0;
-      padding: 16px;
-      border-bottom: 1px solid var(--line);
+      padding: var(--spacing-lg);
+      border-bottom: 1px solid var(--outline-variant);
       font-size: 18px;
+      font-weight: 600;
+      color: var(--on-surface);
+      background: linear-gradient(180deg, var(--surface-container-high) 0%, var(--surface-container) 100%);
     }
 
     .panel-body {
-      padding: 16px;
+      padding: var(--spacing-lg);
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .panel-body table {
+      margin: calc(-1 * var(--spacing-lg));
+      width: calc(100% + 2 * var(--spacing-lg));
+    }
+
+    .panel-body table th,
+    .panel-body table td {
+      padding: 12px var(--spacing-lg);
     }
 
     .actions {
       display: flex;
-      gap: 8px;
+      gap: var(--spacing-sm);
       flex-wrap: wrap;
     }
 
     .row-actions {
       display: flex;
-      gap: 6px;
+      gap: var(--spacing-sm);
     }
 
     .row-actions button {
-      padding: 7px 9px;
+      padding: 6px 12px;
       font-size: 12px;
     }
 
+    /* Messages */
     .message {
-      min-height: 22px;
-      margin-top: 12px;
-      color: var(--blue);
-      font-size: 14px;
+      min-height: 20px;
+      margin-top: var(--spacing-md);
+      padding: 10px 12px;
+      border-radius: var(--radius-base);
+      color: var(--secondary);
+      font-size: 13px;
+      background: rgba(191, 198, 220, 0.1);
+      border: 1px solid var(--secondary);
     }
 
     .message.error {
-      color: var(--red);
+      color: var(--error);
+      background: rgba(255, 180, 171, 0.1);
+      border-color: var(--error);
+    }
+
+    .message:empty {
+      display: none;
     }
 
     .hidden {
       display: none !important;
     }
 
+    /* Status Badge */
     .status {
       display: inline-block;
-      border-radius: 999px;
-      padding: 5px 9px;
-      font-size: 12px;
-      color: #ffffff;
-      background: var(--green);
+      border-radius: var(--radius-full);
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--on-primary-container);
+      background: var(--primary-container);
       white-space: nowrap;
     }
 
     .status.over_budget {
-      background: var(--amber);
+      color: var(--on-error-container);
+      background: var(--error-container);
     }
 
-    @media (max-width: 900px) {
-      .shell,
-      .grid,
+    .status.within_budget {
+      color: var(--on-surface-variant);
+      background: var(--surface-container-high);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
       .stats {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+
+      .shell {
         grid-template-columns: 1fr;
       }
 
       .sidebar {
-        border-right: 0;
-        border-bottom: 1px solid var(--line);
+        border-right: none;
+        border-bottom: 1px solid var(--outline-variant);
+        padding: var(--spacing-md);
+      }
+
+      .main {
+        padding: var(--spacing-md);
+        gap: var(--spacing-lg);
       }
 
       .topbar {
-        align-items: flex-start;
         flex-direction: column;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .display-lg {
+        font-size: 28px;
+        line-height: 34px;
+      }
+
+      .topbar h2 {
+        font-size: 24px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .panel {
+        border-radius: var(--radius-lg);
+      }
+
+      .sidebar {
+        gap: var(--spacing-md);
+      }
+
+      .form {
+        gap: var(--spacing-sm);
       }
 
       table {
-        display: block;
-        overflow-x: auto;
+        font-size: 12px;
       }
+
+      th, td {
+        padding: 10px 8px;
+      }
+
+      button {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--surface-container-low);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--outline-variant);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--outline);
     }
   </style>
 </head>
@@ -293,8 +697,8 @@
   <div class="shell">
     <aside class="sidebar">
       <div class="brand">
-        <h1>Expense Tracker</h1>
-        <p>Budget and spending dashboard</p>
+        <h1>Fiscal</h1>
+        <p>Expense &amp; Budget Tracker</p>
       </div>
 
       <div id="authBox">
@@ -305,62 +709,63 @@
 
         <form id="loginForm" class="form">
           <label>Email or username
-            <input id="loginUsername" required autocomplete="username">
+            <input id="loginUsername" required autocomplete="username" placeholder="Enter email or username">
           </label>
           <label>Password
-            <input id="loginPassword" type="password" required autocomplete="current-password">
+            <input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Enter password">
           </label>
           <button type="submit">Login</button>
         </form>
 
         <form id="signupForm" class="form hidden">
           <label>Username
-            <input id="signupUsername" required minlength="3">
+            <input id="signupUsername" required minlength="3" placeholder="Choose a username">
           </label>
           <label>Email
-            <input id="signupEmail" type="email" required>
+            <input id="signupEmail" type="email" required placeholder="Enter your email">
           </label>
           <label>Password
-            <input id="signupPassword" type="password" required minlength="6">
+            <input id="signupPassword" type="password" required minlength="6" placeholder="Create a password">
           </label>
           <button type="submit">Create Account</button>
         </form>
+
+        <div id="message" class="message"></div>
       </div>
 
       <div id="accountBox" class="hidden">
-        <div class="user" id="accountText"></div>
-        <div class="actions" style="margin-top: 14px;">
-          <button class="secondary" type="button" onclick="openDocs()">API Docs</button>
-          <button class="danger" type="button" onclick="logout()">Logout</button>
+        <div class="user-section" id="accountText"></div>
+        <div class="actions" style="margin-top: 16px; gap: 8px;">
+          <button class="secondary" type="button" style="flex: 1;" onclick="openDocs()">API Docs</button>
+          <button class="danger" type="button" style="flex: 1;" onclick="logout()">Logout</button>
         </div>
+        <div id="message" class="message"></div>
       </div>
-
-      <div id="message" class="message"></div>
     </aside>
 
     <main class="main">
       <div class="topbar">
-        <div>
+        <div class="topbar-content">
           <h2>Dashboard</h2>
           <div class="user" id="todayText"></div>
         </div>
         <div class="actions">
-          <button class="secondary" type="button" onclick="loadAll()">Refresh</button>
+          <button class="secondary" type="button" onclick="loadAll()">↻ Refresh</button>
         </div>
       </div>
 
       <section class="stats">
         <div class="stat">
-          <span>Total spent</span>
-          <strong id="totalSpent">0.00</strong>
+          <div class="stat-label">Total Spent</div>
+          <div class="stat-value" id="totalSpent">0.00</div>
         </div>
         <div class="stat">
-          <span>Expenses</span>
-          <strong id="expenseCount">0</strong>
+          <div class="stat-label">Expenses</div>
+          <div class="stat-value" id="expenseCount">0</div>
         </div>
         <div class="stat">
-          <span>Budgets</span>
-          <strong id="budgetCount">0</strong>
+          <div class="stat-label">Budgets</div>
+          <div class="stat-value" id="budgetCount">0</div>
         </div>
       </section>
 
@@ -371,30 +776,30 @@
             <form id="expenseForm" class="form">
               <input id="expenseId" type="hidden">
               <label>Title
-                <input id="expenseTitle" required>
+                <input id="expenseTitle" required placeholder="e.g., Groceries">
               </label>
               <label>Amount
-                <input id="expenseAmount" type="number" step="0.01" min="1" required>
+                <input id="expenseAmount" type="number" step="0.01" min="0" required placeholder="0.00">
               </label>
               <label>Category
-                <input id="expenseCategory" required>
+                <input id="expenseCategory" required placeholder="e.g., Food">
               </label>
               <label>Date
                 <input id="expenseDate" type="date" required>
               </label>
-              <label>Note
-                <textarea id="expenseNote" rows="3"></textarea>
+              <label>Note (Optional)
+                <textarea id="expenseNote" rows="3" placeholder="Add a note..."></textarea>
               </label>
               <div class="actions">
-                <button type="submit">Save Expense</button>
-                <button class="secondary" type="button" onclick="resetExpenseForm()">Clear</button>
+                <button type="submit" style="flex: 1;">Save Expense</button>
+                <button class="secondary" type="button" style="flex: 1;" onclick="resetExpenseForm()">Clear</button>
               </div>
             </form>
           </div>
         </div>
 
         <div class="panel">
-          <h3>Expenses</h3>
+          <h3>Recent Expenses</h3>
           <div class="panel-body">
             <table>
               <thead>
@@ -419,17 +824,17 @@
             <form id="budgetForm" class="form">
               <input id="budgetId" type="hidden">
               <label>Category
-                <input id="budgetCategory" required>
+                <input id="budgetCategory" required placeholder="e.g., Food">
               </label>
-              <label>Limit amount
-                <input id="budgetAmount" type="number" step="0.01" min="1" required>
+              <label>Limit Amount
+                <input id="budgetAmount" type="number" step="0.01" min="0" required placeholder="0.00">
               </label>
               <label>Month
                 <input id="budgetMonth" type="month" required>
               </label>
               <div class="actions">
-                <button type="submit">Save Budget</button>
-                <button class="secondary" type="button" onclick="resetBudgetForm()">Clear</button>
+                <button type="submit" style="flex: 1;">Save Budget</button>
+                <button class="secondary" type="button" style="flex: 1;" onclick="resetBudgetForm()">Clear</button>
               </div>
             </form>
           </div>
@@ -691,10 +1096,11 @@
             </div>
           </td>
         </tr>
-      `).join("") || `<tr><td colspan="5">No expenses yet</td></tr>`;
+      `).join("") || `<tr><td colspan="5" style="text-align: center; color: var(--on-surface-variant);">No expenses yet</td></tr>`;
 
       document.getElementById("budgetRows").innerHTML = state.budgets.map(budget => {
         const status = state.summary?.budgets.find(item => item.budget_id === budget.id);
+        const statusLabel = status?.status || "within_budget";
         return `
           <tr>
             <td>${escapeHtml(budget.category)}</td>
@@ -702,7 +1108,7 @@
             <td>${money.format(budget.limit_amount)}</td>
             <td>${money.format(status?.spent || 0)}</td>
             <td>${money.format(status?.remaining ?? budget.limit_amount)}</td>
-            <td><span class="status ${status?.status || ""}">${status?.status || "within_budget"}</span></td>
+            <td><span class="status ${statusLabel === "over_budget" ? "over_budget" : "within_budget"}">${statusLabel.replace(/_/g, " ")}</span></td>
             <td>
               <div class="row-actions">
                 <button class="secondary" type="button" onclick="editBudget('${budget.id}')">Edit</button>
@@ -711,7 +1117,7 @@
             </td>
           </tr>
         `;
-      }).join("") || `<tr><td colspan="7">No budgets yet</td></tr>`;
+      }).join("") || `<tr><td colspan="7" style="text-align: center; color: var(--on-surface-variant);">No budgets yet</td></tr>`;
 
       if (state.user) {
         document.getElementById("accountText").textContent = `${state.user.username} - ${state.user.email}`;
