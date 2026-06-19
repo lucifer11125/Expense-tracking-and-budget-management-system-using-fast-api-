@@ -6,7 +6,6 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from dotenv import load_dotenv
-from sqlalchemy.orm import Session
 
 from app import crud
 from app.database import get_db
@@ -59,7 +58,7 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) ->
 
 def get_current_user(
     token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db),
+    conn=Depends(get_db),
 ):
     credentials_error = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -74,7 +73,7 @@ def get_current_user(
     except JWTError as exc:
         raise credentials_error from exc
 
-    user = crud.find_user(db, email)
+    user = crud.find_user(conn, email)
     if user is None:
         raise credentials_error
     return user
