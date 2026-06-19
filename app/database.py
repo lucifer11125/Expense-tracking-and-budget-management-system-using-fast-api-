@@ -23,23 +23,31 @@ if not DATABASE_URL:
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Create a thread-safe connection pool (min 1, max 20 connections)
-connection_pool = pool.ThreadedConnectionPool(
-    minconn=1,
-    maxconn=20,
-    dsn=DATABASE_URL,
-    cursor_factory=RealDictCursor,
-)
+# Lazy connection pool – created on first use so cold-start import won't fail
+_pool = None
+
+
+def _get_pool():
+    """Return the connection pool, creating it on first call."""
+    global _pool
+    if _pool is None:
+        _pool = pool.ThreadedConnectionPool(
+            minconn=1,
+            maxconn=20,
+            dsn=DATABASE_URL,
+            cursor_factory=RealDictCursor,
+        )
+    return _pool
 
 
 def get_conn():
     """Get a connection from the pool."""
-    return connection_pool.getconn()
+    return _get_pool().getconn()
 
 
 def put_conn(conn):
     """Return a connection to the pool."""
-    connection_pool.putconn(conn)
+    _get_pool().putconn(conn)
 
 
 def get_db():
