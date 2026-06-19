@@ -7,8 +7,11 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
+# pyrefly: ignore [missing-import]
 from app import crud
+# pyrefly: ignore [missing-import]
 from app.database import create_tables, get_db
+# pyrefly: ignore [missing-import]
 from app.schemas import (
     BudgetCreate,
     BudgetOut,
@@ -21,6 +24,7 @@ from app.schemas import (
     UserAuth,
     UserOut,
 )
+# pyrefly: ignore [missing-import]
 from app.utils import (
     create_access_token,
     create_refresh_token,
@@ -30,7 +34,11 @@ from app.utils import (
 )
 
 app = FastAPI(title="Expense Tracker API", version="1.0.0")
-create_tables()
+
+@app.on_event("startup")
+def startup_event():
+    create_tables()
+
 STATIC_DIR = Path(__file__).with_name("static")
 
 # CORS Configuration for production deployment

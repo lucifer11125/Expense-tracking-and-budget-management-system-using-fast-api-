@@ -13,14 +13,8 @@ DATABASE_URL = (
     or os.getenv("POSTGRES_URL")
 )
 
-if not DATABASE_URL:
-    raise RuntimeError(
-        "No DATABASE_URL or POSTGRES_URL environment variable set. "
-        "Please configure a PostgreSQL connection string."
-    )
-
 # Neon / Vercel uses 'postgres://' which psycopg2 doesn't accept
-if DATABASE_URL.startswith("postgres://"):
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # Lazy connection pool – created on first use so cold-start import won't fail
@@ -31,6 +25,11 @@ def _get_pool():
     """Return the connection pool, creating it on first call."""
     global _pool
     if _pool is None:
+        if not DATABASE_URL:
+            raise RuntimeError(
+                "No DATABASE_URL or POSTGRES_URL environment variable set. "
+                "Please configure a PostgreSQL connection string."
+            )
         _pool = pool.ThreadedConnectionPool(
             minconn=1,
             maxconn=20,

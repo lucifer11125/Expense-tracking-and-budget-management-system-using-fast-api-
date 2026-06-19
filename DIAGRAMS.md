@@ -1,54 +1,87 @@
-# Expense Tracker Diagrams
+# Expense Tracker Diagrams & Architecture
 
-## ER Diagram
+This document provides visual models of the PostgreSQL schema and the serverless architecture of the application.
+
+## Schema (ER) Diagram
+
+The database uses PostgreSQL with a relational schema. Users can own multiple expenses and set multiple budgets.
 
 ```mermaid
 erDiagram
-    USER ||--o{ EXPENSE : owns
-    USER ||--o{ BUDGET : sets
-
-    USER {
-        string id PK
-        string username
-        string email
-        string hashed_password
+    users {
+        TEXT id PK
+        TEXT username UNIQUE
+        TEXT email UNIQUE
+        TEXT hashed_password
     }
-
-    EXPENSE {
-        string id PK
-        string user_id FK
-        string title
-        float amount
-        string category
-        date spent_on
-        string note
+    expenses {
+        TEXT id PK
+        TEXT user_id FK "References users.id"
+        TEXT title
+        DOUBLE_PRECISION amount
+        TEXT category
+        DATE spent_on
+        TEXT note
     }
-
-    BUDGET {
-        string id PK
-        string user_id FK
-        string category
-        float limit_amount
-        string month
+    budgets {
+        TEXT id PK
+        TEXT user_id FK "References users.id"
+        TEXT category
+        DOUBLE_PRECISION limit_amount
+        TEXT month
     }
+    users ||--o{ expenses : "owns"
+    users ||--o{ budgets : "sets"
 ```
 
-## Simple Schema / Flow
+---
+
+## System Architecture
+
+The application is built to run on serverless environments like Vercel with a stateless architecture, connecting to a PostgreSQL database (e.g., Neon or local PostgreSQL).
 
 ```mermaid
-flowchart LR
-    Client[Client / Swagger UI]
-    API[FastAPI routes: app.py]
-    JWT[JWT and password helpers: utils.py]
-    DBLayer[SQLAlchemy models and session: database.py]
-    CRUD[CRUD functions: crud.py]
-    DB[(SQLite database: expense_tracker.db)]
+flowchart TD
+    subgraph Client [Client Side / Web Browser]
+        UI[Single Page App: index.html]
+        Storage[(Local Storage: JWT Tokens)]
+        UI -.->|Read/Write Tokens| Storage
+    end
 
-    Client --> API
-    API --> JWT
-    API --> CRUD
-    API --> DBLayer
-    JWT --> CRUD
-    CRUD --> DBLayer
-    DBLayer --> DB
+    subgraph APIHost [API Hosting Environment]
+        subgraph Vercel [Vercel Serverless Platform (Prod)]
+            Func[FastAPI App: app/app.py]
+            Handler[Vercel Python Builder: @vercel/python]
+            Handler --> Func
+        end
+        
+        subgraph LocalHost [Local Machine (Dev)]
+            Uvi[Uvicorn Server]
+            LocalApp[FastAPI App: app/app.py]
+            Uvi --> LocalApp
+        end
+    end
+
+    subgraph DBHost [Database Hosting]
+        Neon[(PostgreSQL: Neon / Vercel Postgres)]
+        LocalDB[(PostgreSQL: Local Instance)]
+    end
+
+    subgraph Logic [Application Core Services]
+        JWT[Auth Services: app/utils.py]
+        CRUD[CRUD Engine: app/crud.py]
+        ConnPool[Connection Pool: app/database.py]
+    end
+
+    %% Routing
+    UI -->|HTTPS Requests| Handler
+    UI -->|HTTP Requests| Uvi
+    
+    Func & LocalApp --> JWT
+    Func & LocalApp --> CRUD
+    CRUD --> ConnPool
+    
+    %% DB Connections
+    ConnPool -.->|Production Connection| Neon
+    ConnPool -.->|Development Connection| LocalDB
 ```
