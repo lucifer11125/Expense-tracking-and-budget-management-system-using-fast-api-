@@ -98,10 +98,14 @@ CREATE INDEX IF NOT EXISTS idx_budgets_user   ON budgets(user_id);
 
 def create_tables() -> None:
     """Create all tables if they don't already exist."""
-    conn = get_conn()
     try:
-        with conn.cursor() as cur:
-            cur.execute(_CREATE_TABLES_SQL)
-        conn.commit()
-    finally:
-        put_conn(conn)
+        conn = get_conn()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(_CREATE_TABLES_SQL)
+            conn.commit()
+        finally:
+            put_conn(conn)
+    except Exception as e:
+        print(f"DATABASE CONNECTION ERROR: {e}", flush=True)
+        raise
