@@ -6,10 +6,15 @@ from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
 
 # Use PostgreSQL if available, fallback to SQLite for development
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///./expense_tracker.db"  # Fallback for development
+# Vercel/Neon sets POSTGRES_URL; also check DATABASE_URL for flexibility
+DATABASE_URL = (
+    os.getenv("DATABASE_URL")
+    or os.getenv("POSTGRES_URL")
+    or "sqlite:///./expense_tracker.db"  # Fallback for development
 )
+# Neon/Vercel uses 'postgres://' which SQLAlchemy doesn't accept; fix it
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # Configure engine based on database type
 if DATABASE_URL.startswith("postgresql"):
