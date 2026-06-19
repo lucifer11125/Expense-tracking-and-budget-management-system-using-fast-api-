@@ -13,3 +13,4 @@ __pycache__
 expense_tracker.db
 expense_tracker_test.db
 .DS_Store
+pyproject.toml
