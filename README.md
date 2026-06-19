@@ -114,4 +114,4 @@ Now the expense, budget, and summary endpoints will work.
 See [DIAGRAMS.md](DIAGRAMS.md) for:
 
 - ER diagram
-- Simple app schema / flow diagram
+- Simple app schema
