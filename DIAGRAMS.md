@@ -42,35 +42,35 @@ The application is built to run on serverless environments like Vercel with a st
 
 ```mermaid
 flowchart TD
-    subgraph Client [Client Side / Web Browser]
-        UI[Single Page App: index.html]
-        Storage[(Local Storage: JWT Tokens)]
+    subgraph Client ["Client Side / Web Browser"]
+        UI["Single Page App: index.html"]
+        Storage[("Local Storage: JWT Tokens")]
         UI -.->|Read/Write Tokens| Storage
     end
 
-    subgraph APIHost [API Hosting Environment]
-        subgraph Vercel [Vercel Serverless Platform (Prod)]
-            Func[FastAPI App: app/app.py]
-            Handler[Vercel Python Builder: @vercel/python]
+    subgraph APIHost ["API Hosting Environment"]
+        subgraph Vercel ["Vercel Serverless Platform (Prod)"]
+            Func["FastAPI App: app/app.py"]
+            Handler["Vercel Python Builder: @vercel/python"]
             Handler --> Func
         end
         
-        subgraph LocalHost [Local Machine (Dev)]
-            Uvi[Uvicorn Server]
-            LocalApp[FastAPI App: app/app.py]
+        subgraph LocalHost ["Local Machine (Dev)"]
+            Uvi["Uvicorn Server"]
+            LocalApp["FastAPI App: app/app.py"]
             Uvi --> LocalApp
         end
     end
 
-    subgraph DBHost [Database Hosting]
-        Neon[(PostgreSQL: Neon / Vercel Postgres)]
-        LocalDB[(PostgreSQL: Local Instance)]
+    subgraph DBHost ["Database Hosting"]
+        Neon[("PostgreSQL: Neon / Vercel Postgres")]
+        LocalDB[("PostgreSQL: Local Instance")]
     end
 
-    subgraph Logic [Application Core Services]
-        JWT[Auth Services: app/utils.py]
-        CRUD[CRUD Engine: app/crud.py]
-        ConnPool[Connection Pool: app/database.py]
+    subgraph Logic ["Application Core Services"]
+        JWT["Auth Services: app/utils.py"]
+        CRUD["CRUD Engine: app/crud.py"]
+        ConnPool["Connection Pool: app/database.py"]
     end
 
     %% Routing
