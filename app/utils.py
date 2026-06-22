@@ -7,7 +7,9 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from dotenv import load_dotenv
 
+# pyrefly: ignore [missing-import]
 from app import crud
+# pyrefly: ignore [missing-import]
 from app.database import get_db
 
 load_dotenv()
